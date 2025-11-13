@@ -34,13 +34,13 @@ internal class Program
                     gerenciador.AdicionarConta();
                     break;
                 case 2:
-                    
+                    gerenciador.Depositar();
                     break;
                 case 3:
-                    
+                    gerenciador.Sacar();
                     break;
                 case 4:
-                    
+                    gerenciador.VerSaldo();
                     break;
                 case 5:
                     

@@ -7,7 +7,7 @@ internal class GerenciadorBanco
 {
     List<Conta> contas = new List<Conta>();
     int proximoId = 1;
-    string caminhoArquivo = "contas.json";
+    private const string CaminhoArquivo = "contas.json";
     private const decimal TAXA_SAQUE = 3m;        // taxa fixa
     private const decimal RENTABILIDADE = 0.02m;
 
@@ -62,6 +62,88 @@ internal class GerenciadorBanco
         Console.WriteLine($"Conta criada com sucesso! Id: {conta.Id}\n");
     }
 
+    public void Depositar()
+    {
+        var conta = ObterContaPorCpfPerguntando("CPF para deposito: ");
+        if (conta == null) return;
+
+        
+        Console.Write("Valor para deposito: R$");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal valor) || valor < 0) 
+        {
+            Console.WriteLine("Valor inválido. Informe um valor positivo.\n");
+            return;
+        }
+
+        if(valor <= 0)
+        {
+            Console.WriteLine("Valor inválido. Informe um valor positivo.\n");
+            return;
+        }
+
+        conta.Saldo += valor;
+        SalvarContasNoArquivo();
+        Console.WriteLine($"Depósito realizado. Saldo atual: R$ {conta.Saldo:F2}\n");
+    }
+
+    public void Sacar()
+    {
+        var conta = ObterContaPorCpfPerguntando("CPF para deposito: ");
+        if (conta == null) return;
+
+        if (conta.Saldo <= 0)
+        {
+            Console.WriteLine("Sem Saldo para saque!\n");
+            return;
+        }
+
+        Console.Write("Valor do saque (taxa R$ 3 será aplicada): R$");
+        if(!decimal.TryParse(Console.ReadLine(),out decimal valor) || valor < 0)
+        {
+            Console.WriteLine("Valor inválido. Informe um valor positivo.\n");
+            return;
+        }
+
+
+        if(valor <= 0)
+        {
+            Console.WriteLine("Valor inválido. Informe um valor positivo.\n");
+            return;
+        }
+
+        decimal total = valor + TAXA_SAQUE;
+        if (conta.Saldo < total)
+        {
+            Console.WriteLine($"Saldo insuficiente para saque. Seu saldo é de R${conta.Saldo:F2}\n");
+            return;
+        }
+
+        conta.Saldo -= total;
+        SalvarContasNoArquivo();
+        Console.WriteLine($"Saque de R$ {valor:F2} realizado (taxa R$ {TAXA_SAQUE:F2}). Saldo: R$ {conta.Saldo:F2}\n");
+    }
+
+    public void VerSaldo()
+    {
+        var conta = ObterContaPorCpfPerguntando("CPF para consulta: ");
+        if (conta == null) return;
+
+        Console.WriteLine($"Titular: {conta.Titular} | Saldo: R$ {conta.Saldo:F2}\n");
+    }
+
+    public void ListarContas()
+    {
+        if (contas.Count == 0)
+        {
+            Console.WriteLine("Não há contas cadastradas.\n");
+            return;
+        }
+
+        Console.WriteLine("=== CONTAS CADASTRADAS ===");
+        foreach (var c in contas.OrderBy(c => c.Id))
+            c.Exibir();
+        Console.WriteLine();
+    }
 
     // --------------------- Auxiliares ---------------------
 
@@ -131,25 +213,18 @@ internal class GerenciadorBanco
         return true;
     }
 
-    public void ListarContas()
-    {
-        if (contas.Count == 0)
-        {
-            Console.WriteLine("Não há contas cadastradas.\n");
-            return;
-        }
-
-        Console.WriteLine("=== CONTAS CADASTRADAS ===");
-        foreach (var c in contas.OrderBy(c => c.Id))
-            c.Exibir();
-        Console.WriteLine();
-    }
 
     //Persistencia de dados em arquivo JSON
 
     private void SalvarContasNoArquivo()
     {
-        if (!File.Exists(caminhoArquivo))
+        string json = System.Text.Json.JsonSerializer.Serialize(contas);
+        File.WriteAllText(CaminhoArquivo, json);
+    }
+
+    private void CarregarContasDoArquivo()
+    {
+        if (!File.Exists(CaminhoArquivo))
         {
             contas = new List<Conta>();
             return;
@@ -157,13 +232,12 @@ internal class GerenciadorBanco
 
         try
         {
-            string json = File.ReadAllText(caminhoArquivo);
+            string json = File.ReadAllText(CaminhoArquivo);
             var dados = JsonSerializer.Deserialize<List<Conta>>(json);
             contas = dados ?? new List<Conta>();
         }
         catch
         {
-            // Se der erro na leitura/parse, evita quebrar o app
             contas = new List<Conta>();
         }
     }

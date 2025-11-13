@@ -131,6 +131,43 @@ internal class GerenciadorBanco
         Console.WriteLine($"Titular: {conta.Titular} | Saldo: R$ {conta.Saldo:F2}\n");
     }
 
+    public void Investir()
+    {
+        var conta = ObterContaPorCpfPerguntando("CPF para deposito: ");
+        if (conta == null) return;
+
+        if (conta.Saldo <= 0)
+        {
+            Console.WriteLine("Sem Saldo para investir!\n");
+            return;
+        }
+
+        Console.Write("Valor para investir: R$");
+        if (!decimal.TryParse(Console.ReadLine(), out decimal valor) || valor < 0)
+        {
+            Console.WriteLine("Valor inválido. Informe um valor positivo.\n");
+            return;
+        }
+
+        if(valor <= 0)
+        {
+            Console.WriteLine("Valor invalido digite um numero valor(positivo)!");
+            return;
+        }
+
+        if (valor > conta.Saldo)
+        {
+            Console.WriteLine($"Saldo insuficiente. Saldo atual: R$ {conta.Saldo:F2}\n");
+            return;
+        }
+
+        decimal retorno = Math.Round(valor * RENTABILIDADE, 2);
+        conta.Saldo = conta.Saldo - valor + (valor + retorno);
+        SalvarContasNoArquivo();
+        Console.WriteLine($"Investimento aplicado! Retorno: R$ {retorno:F2}. Saldo: R$ {conta.Saldo:F2}\n");
+
+    }
+
     public void ListarContas()
     {
         if (contas.Count == 0)

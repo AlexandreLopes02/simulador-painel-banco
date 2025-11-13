@@ -43,7 +43,7 @@ internal class Program
                     gerenciador.VerSaldo();
                     break;
                 case 5:
-                    
+                    gerenciador.Investir();
                     break;
                 case 6:
                     

@@ -4,12 +4,14 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        GerenciadorBanco gerenciador = new GerenciadorBanco();
+        var gerenciador = new GerenciadorBanco();
         int opcao = 0;
 
-        while(opcao != 8)
+        while (opcao != 8)
         {
-            Console.WriteLine("=== PAINEL DO BANCO ===");
+            Console.WriteLine("================================");
+            Console.WriteLine("          PAINEL DO BANCO       ");
+            Console.WriteLine("================================");
             Console.WriteLine("1 - Criar conta");
             Console.WriteLine("2 - Depositar");
             Console.WriteLine("3 - Sacar (taxa R$ 3)");
@@ -22,7 +24,7 @@ internal class Program
 
             if (!int.TryParse(Console.ReadLine(), out opcao))
             {
-                Console.WriteLine("Opção inválida.\n");
+                Console.WriteLine("\nOpção inválida.\n");
                 continue;
             }
 
@@ -30,33 +32,15 @@ internal class Program
 
             switch (opcao)
             {
-                case 1:
-                    gerenciador.AdicionarConta();
-                    break;
-                case 2:
-                    gerenciador.Depositar();
-                    break;
-                case 3:
-                    gerenciador.Sacar();
-                    break;
-                case 4:
-                    gerenciador.VerSaldo();
-                    break;
-                case 5:
-                    gerenciador.Investir();
-                    break;
-                case 6:
-                    gerenciador.ExcluirConta();
-                    break;
-                case 7:
-                    gerenciador.ListarContas();
-                    break;
-                case 0:
-                    Console.WriteLine("Saindo do sistema...");
-                    break;
-                default:
-                    Console.WriteLine("Opção inválida.\n");
-                    break;
+                case 1: gerenciador.AdicionarConta(); break;
+                case 2: gerenciador.Depositar(); break;
+                case 3: gerenciador.Sacar(); break;
+                case 4: gerenciador.VerSaldo(); break;
+                case 5: gerenciador.Investir(); break;
+                case 6: gerenciador.ExcluirConta(); break;
+                case 7: gerenciador.ListarContas(); break;
+                case 8: Console.WriteLine("Saindo do sistema..."); break;
+                default: Console.WriteLine("Opção inválida.\n"); break;
             }
         }
     }

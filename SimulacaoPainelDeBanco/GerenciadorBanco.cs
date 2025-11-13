@@ -168,6 +168,31 @@ internal class GerenciadorBanco
 
     }
 
+    public void ExcluirConta()
+    {
+        var conta = ObterContaPorCpfPerguntando("CPF da conta a excluir: ");
+        if (conta == null) return;
+
+        if(conta.Saldo != 0)
+        {
+            Console.WriteLine("Conta só pode ser excluída com saldo zero.\n");
+            return;
+        }
+
+        Console.Write($"Tem certeza que deseja excluir a conta de {conta.Titular}? (S/N): ");
+        string resp = (Console.ReadLine() ?? "").Trim().ToUpperInvariant();
+        if (resp == "S")
+        {
+            contas.Remove(conta);
+            SalvarContasNoArquivo();
+            Console.WriteLine("Conta excluída.\n");
+        }
+        else
+        {
+            Console.WriteLine("Operação cancelada.\n");
+        }
+    }
+
     public void ListarContas()
     {
         if (contas.Count == 0)

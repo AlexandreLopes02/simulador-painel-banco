@@ -46,7 +46,7 @@ internal class Program
                     gerenciador.Investir();
                     break;
                 case 6:
-                    
+                    gerenciador.ExcluirConta();
                     break;
                 case 7:
                     gerenciador.ListarContas();
